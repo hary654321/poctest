@@ -20,7 +20,7 @@ func main() {
 	cache.NewCacheClient(time.Duration(30))
 
 	r := routers.InitRouter()
-	go heart()
+	// go heart()
 	r.Run("0.0.0.0:18000")
 }
 

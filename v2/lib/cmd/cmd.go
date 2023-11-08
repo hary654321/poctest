@@ -41,8 +41,8 @@ func CleanLog() {
 }
 
 func ResTart() {
-	cmd := exec.Command("bash", "-c", "ps -ef | grep ./worker | grep -v grep | awk '{print $2}' | xargs kill -9")
-	cmd1 := exec.Command("bash", "-c", "cd /scanning-client && ./workergjm  >> /zrtx/log/cyberspace/worker.log &")
+	cmd := exec.Command("bash", "-c", "ps -ef | grep ./nuclei | grep -v grep | awk '{print $2}' | xargs kill -9")
+	cmd1 := exec.Command("bash", "-c", "cd /scanning-client && ./nuclei  >> /zrtx/log/cyberspace/worker.log &")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		slog.Println(slog.DEBUG, err)

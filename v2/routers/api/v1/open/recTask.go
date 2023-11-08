@@ -2,10 +2,12 @@ package open
 
 import (
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/projectdiscovery/nuclei/v2/cmd/nuclei"
+	"github.com/projectdiscovery/nuclei/v2/core/slog"
 	"github.com/projectdiscovery/nuclei/v2/lib/cache"
 	"github.com/projectdiscovery/nuclei/v2/pkg/utils"
 )
@@ -30,8 +32,11 @@ func RecTask(c *gin.Context) {
 
 	cache.Set(taskId, []byte("1"))
 
-	temPre := "/root/nuclei-templates"
+	dir, _ := os.Getwd()
 
+	temPre := dir + "/vul"
+
+	slog.Println(slog.DEBUG, "temPre", temPre)
 	tmp := ""
 	if tempContent != "" {
 		tmp = temPre + "/diy/" + tempName + ".yaml"
