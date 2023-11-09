@@ -67,6 +67,10 @@ func init() {
 		}()
 	}
 
+	dir, _ := os.Getwd()
+	temPre := dir + "/vul"
+	options.TemplatesDirectory = temPre
+
 	runner.ParseOptions(options)
 	options.ConfigPath = configPath
 

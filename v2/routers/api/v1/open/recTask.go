@@ -36,7 +36,7 @@ func RecTask(c *gin.Context) {
 
 	temPre := dir + "/vul"
 
-	slog.Println(slog.DEBUG, "temPre", temPre)
+	// slog.Println(slog.DEBUG, "temPre", temPre)
 	tmp := ""
 	if tempContent != "" {
 		tmp = temPre + "/diy/" + tempName + ".yaml"
@@ -44,6 +44,7 @@ func RecTask(c *gin.Context) {
 	} else if tempPath != "" {
 		tmp = temPre + tempPath
 
+		slog.Println(slog.DEBUG, "===", tmp)
 		if !utils.FileExists(tmp) {
 			c.JSON(http.StatusOK, gin.H{
 				"code": 400,
