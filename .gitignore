@@ -3,6 +3,7 @@
 v2/vendor
 v2/dist
 v2/worker
+v2/vul
 integration_tests/nuclei
 integration_tests/integration-test
 v2/cmd/nuclei/main
