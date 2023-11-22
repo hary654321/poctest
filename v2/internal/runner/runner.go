@@ -17,6 +17,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/projectdiscovery/nuclei/v2/core/slog"
 	"github.com/projectdiscovery/nuclei/v2/internal/runner/nucleicloud"
 
 	"github.com/blang/semver"
@@ -352,8 +353,10 @@ func (r *Runner) Close() {
 
 // RunEnumeration sets up the input layer for giving input nuclei.
 // binary and runs the actual enumeration
-func (r *Runner) RunEnumeration(ip []string, taskId, tmp string) error {
+func (r *Runner) RunEnumeration(ip []string, taskId, tmp string, Validate bool) error {
 	r.options.Targets = ip
+
+	r.options.Validate = Validate
 	if tmp != "" {
 		r.options.Templates = []string{tmp}
 	} else {
@@ -475,6 +478,9 @@ func (r *Runner) RunEnumeration(ip []string, taskId, tmp string) error {
 	}
 
 	store, err := loader.New(loader.NewConfig(r.options, templateConfig, r.catalog, executerOpts))
+
+	slog.Println(slog.DEBUG, store.Templates())
+
 	if err != nil {
 		return errors.Wrap(err, "could not load templates from config")
 	}
@@ -584,7 +590,7 @@ func (r *Runner) RunEnumeration(ip []string, taskId, tmp string) error {
 			enumeration = true
 		}
 	} else {
-		// slog.Println(slog.DEBUG, executerOpts.Output)
+		slog.Println(slog.DEBUG, store.Templates())
 		results, err = r.runStandardEnumeration(executerOpts, store, engine)
 		enumeration = true
 	}
@@ -655,7 +661,7 @@ func (r *Runner) executeSmartWorkflowInput(executerOpts protocols.ExecuterOption
 func (r *Runner) executeTemplatesInput(executerOpts protocols.ExecuterOptions, store *loader.Store, engine *core.Engine) (*atomic.Bool, error) {
 	var unclusteredRequests int64
 	for _, template := range store.Templates() {
-		// slog.Println(slog.DEBUG, "store.Templates()", template)
+		slog.Println(slog.DEBUG, "store.Templates()", template)
 		// workflows will dynamically adjust the totals while running, as
 		// it can't be known in advance which requests will be called
 		if len(template.Workflows) > 0 {
@@ -694,6 +700,7 @@ func (r *Runner) executeTemplatesInput(executerOpts protocols.ExecuterOptions, s
 	workflowCount := len(store.Workflows())
 	templateCount := originalTemplatesCount + workflowCount
 
+	slog.Println(slog.DEBUG, originalTemplatesCount, workflowCount)
 	// 0 matches means no templates were found in directory
 	if templateCount == 0 {
 		return &atomic.Bool{}, errors.New("no valid templates were found")

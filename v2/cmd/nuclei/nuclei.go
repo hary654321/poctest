@@ -82,18 +82,24 @@ func init() {
 	runnerSin, _ = runner.New(options)
 }
 
-func Scan(ip []string, tmp string, taskId string) {
+func Scan(ip []string, tmp string, taskId string, Validate bool) error {
 	TaskCount++
-	if err := runnerSin.RunEnumeration(ip, taskId, tmp); err != nil {
-		if options.Validate {
-			slog.Println(slog.DEBUG, "Could not validate templates: %s\n", err)
+	if err := runnerSin.RunEnumeration(ip, taskId, tmp, Validate); err != nil {
+		if Validate {
+			slog.Println(slog.DEBUG, "Could not validate templates：", err)
+
+			return err
 		} else {
-			slog.Println(slog.DEBUG, "Could not run nuclei: %s\n", err)
+			slog.Println(slog.DEBUG, "Could not run nuclei：", err)
+
+			return err
 		}
 	}
 	slog.Println(slog.DEBUG, "运行完成TaskCount:", TaskCount)
 	// cache.Set(taskId, []byte(""))
 	TaskCount--
+
+	return nil
 }
 
 func readConfig() *goflags.FlagSet {
@@ -122,7 +128,7 @@ on extensive configurability, massive extensibility and ease of use.`)
 		flagSet.StringSliceVarP(&options.TemplateURLs, "template-url", "tu", nil, "list of template urls to run (comma-separated, file)", goflags.FileCommaSeparatedStringSliceOptions),
 		flagSet.StringSliceVarP(&options.Workflows, "workflows", "w", nil, "list of workflow or workflow directory to run (comma-separated, file)", goflags.FileCommaSeparatedStringSliceOptions),
 		flagSet.StringSliceVarP(&options.WorkflowURLs, "workflow-url", "wu", nil, "list of workflow urls to run (comma-separated, file)", goflags.FileCommaSeparatedStringSliceOptions),
-		flagSet.BoolVar(&options.Validate, "validate", false, "validate the passed templates to nuclei"),
+		flagSet.BoolVar(&options.Validate, "validate", true, "validate the passed templates to nuclei"),
 		flagSet.BoolVarP(&options.NoStrictSyntax, "no-strict-syntax", "nss", false, "disable strict syntax check on templates"),
 		flagSet.BoolVarP(&options.TemplateDisplay, "template-display", "td", false, "displays the templates content"),
 		flagSet.BoolVar(&options.TemplateList, "tl", false, "list all available templates"),

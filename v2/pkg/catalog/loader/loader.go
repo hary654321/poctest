@@ -286,12 +286,12 @@ func (store *Store) LoadWorkflows(workflowsList []string) []*templates.Template 
 	for workflowPath := range workflowPathMap {
 		loaded, err := parsers.LoadWorkflow(workflowPath, store.config.Catalog)
 		if err != nil {
-			gologger.Warning().Msgf("Could not load workflow %s: %s\n", workflowPath, err)
+			slog.Println(slog.DEBUG, "Could not load workflow %s: %s\n", workflowPath, err)
 		}
 		if loaded {
 			parsed, err := templates.Parse(workflowPath, store.preprocessor, store.config.ExecutorOptions)
 			if err != nil {
-				gologger.Warning().Msgf("Could not parse workflow %s: %s\n", workflowPath, err)
+				slog.Println(slog.DEBUG, "Could not parse workflow %s: %s\n", workflowPath, err)
 			} else if parsed != nil {
 				loadedWorkflows = append(loadedWorkflows, parsed)
 			}

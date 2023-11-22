@@ -21,14 +21,7 @@ func RecTask(c *gin.Context) {
 
 	taskId := c.PostForm("taskId")
 
-	// if string(cache.Get(taskId)) != "" {
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"code": 400,
-	// 		"msg":  "任务已存在",
-	// 		"data": "",
-	// 	})
-	// 	return
-	// }
+	Validate := c.PostForm("validate")
 
 	cache.Set(taskId, []byte("1"))
 
@@ -57,7 +50,16 @@ func RecTask(c *gin.Context) {
 
 	if target != "" {
 		strArrayNew := strings.Split(target, ",")
-		nuclei.Scan(strArrayNew, tmp, taskId)
+		err := nuclei.Scan(strArrayNew, tmp, taskId, Validate == "1")
+
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{
+				"code": 400,
+				"msg":  err.Error(),
+				"data": "",
+			})
+			return
+		}
 	}
 
 	data := make(map[string]interface{})
