@@ -113,7 +113,7 @@ func (e *Executer) Execute(executerOpts protocols.ExecuterOptions, input *contex
 			if e.options.HostErrorsCache != nil {
 				e.options.HostErrorsCache.MarkFailed(input.MetaInput.ID(), err)
 			}
-			gologger.Warning().Msgf("[%s] Could not execute request for %s: %s\n", e.options.TemplateID, input.MetaInput.PrettyPrint(), err)
+			gologger.Warning().Msgf("[%s] 2 Could not execute request for %s: %s\n", e.options.TemplateID, input.MetaInput.PrettyPrint(), err)
 		}
 		// If a match was found and stop at first match is set, break out of the loop and return
 		if results.Load() && (e.options.StopAtFirstMatch || e.options.Options.StopAtFirstMatch) {
@@ -166,7 +166,7 @@ func (e *Executer) ExecuteWithResults(input *contextargs.Context, callback proto
 			if e.options.HostErrorsCache != nil {
 				e.options.HostErrorsCache.MarkFailed(input.MetaInput.ID(), err)
 			}
-			gologger.Warning().Msgf("[%s] Could not execute request for %s: %s\n", e.options.TemplateID, input.MetaInput.PrettyPrint(), err)
+			gologger.Warning().Msgf("[%s] 1 Could not execute request for %s: %s\n", e.options.TemplateID, input.MetaInput.PrettyPrint(), err)
 		}
 		// If a match was found and stop at first match is set, break out of the loop and return
 		if results.Load() && (e.options.StopAtFirstMatch || e.options.Options.StopAtFirstMatch) {
