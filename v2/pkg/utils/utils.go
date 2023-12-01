@@ -162,8 +162,7 @@ func GetLogPath(name string) string {
 			slog.Println(slog.WARN, "新建日志目录失败")
 		}
 	}
-	//slog.Println(slog.INFO, path)
-	path = LogPath + "/" + name + GetHour() + ".json"
+	path = LogPath + "/" + name
 	return path
 }
 

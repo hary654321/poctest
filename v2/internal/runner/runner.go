@@ -362,7 +362,7 @@ func (r *Runner) RunEnumeration(ip []string, taskId, tmp string, Validate bool) 
 	} else {
 		r.options.Templates = []string{}
 	}
-	r.options.Output = utils.LogPath + taskId + ".json"
+	r.options.Output = utils.GetLogPath(taskId + ".json")
 	os.OpenFile(r.options.Output, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
 	options := r.options
 	// Initialize the input source
