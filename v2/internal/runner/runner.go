@@ -591,6 +591,9 @@ func (r *Runner) RunEnumeration(ip []string, taskId, tmp string, Validate bool) 
 		}
 	} else {
 		slog.Println(slog.DEBUG, store.Templates())
+		// for _, template := range store.Templates() {
+		// 	slog.Println(slog.DEBUG, "store.Templates()", template)
+		// }
 		results, err = r.runStandardEnumeration(executerOpts, store, engine)
 		enumeration = true
 	}

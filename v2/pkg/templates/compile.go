@@ -34,11 +34,11 @@ func init() {
 //
 //nolint:gocritic // this cannot be passed by pointer
 func Parse(filePath string, preprocessor Preprocessor, options protocols.ExecuterOptions) (*Template, error) {
-	if !options.DoNotCache {
-		if value, err := parsedTemplatesCache.Has(filePath); value != nil {
-			return value.(*Template), err
-		}
-	}
+	// if !options.DoNotCache {
+	// 	if value, err := parsedTemplatesCache.Has(filePath); value != nil {
+	// 		return value.(*Template), err
+	// 	}
+	// }
 
 	var reader io.ReadCloser
 	if utils.IsURL(filePath) {

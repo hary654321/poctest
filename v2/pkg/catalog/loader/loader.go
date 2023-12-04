@@ -168,7 +168,8 @@ func (store *Store) RegisterPreprocessor(preprocessor templates.Preprocessor) {
 // Load loads all the templates from a store, performs filtering and returns
 // the complete compiled templates for a nuclei execution configuration.
 func (store *Store) Load() {
-	slog.Println(slog.DEBUG, "store.finalTemplates ", store.finalTemplates)
+	// slog.Println(slog.DEBUG, "store.finalTemplates ", store.finalTemplates)
+	// slog.Println(slog.DEBUG, "store.finalWorkflows ", store.finalWorkflows)
 	store.templates = store.LoadTemplates(store.finalTemplates)
 	store.workflows = store.LoadWorkflows(store.finalWorkflows)
 }
@@ -309,6 +310,7 @@ func (store *Store) LoadTemplatesWithTags(templatesList, tags []string) []*templ
 
 	loadedTemplates := make([]*templates.Template, 0, len(templatePathMap))
 	for templatePath := range templatePathMap {
+		// slog.Println(slog.DEBUG, "templatePath", templatePath)
 		loaded, err := parsers.LoadTemplate(templatePath, store.tagFilter, tags, store.config.Catalog)
 		if loaded || store.pathFilter.MatchIncluded(templatePath) {
 			parsed, err := templates.Parse(templatePath, store.preprocessor, store.config.ExecutorOptions)

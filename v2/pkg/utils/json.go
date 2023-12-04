@@ -10,6 +10,10 @@ import (
 
 func WriteJson(path string, data interface{}) {
 
+	dir, _ := os.Getwd()
+
+	path = dir + "/" + path
+
 	var buf bytes.Buffer
 
 	enc := json.NewEncoder(&buf)
