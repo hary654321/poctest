@@ -515,7 +515,11 @@ func (r *Runner) RunEnumeration(ip []string, taskId, tmp string, Validate bool) 
 		}
 		return nil // exit
 	}
-	store.Load()
+	if err := store.Load(); err != nil {
+
+		slog.Println(slog.DEBUG, err)
+		return err
+	}
 
 	// add the hosts from the metadata queries of loaded templates into input provider
 	if r.options.Uncover && len(r.options.UncoverQuery) == 0 {

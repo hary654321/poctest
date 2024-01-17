@@ -201,7 +201,7 @@ func (s *Service) processWappalyzerInputPair(input *contextargs.MetaInput) {
 	}
 	uniqueTags := sliceutil.Dedupe(items)
 
-	templatesList := s.store.LoadTemplatesWithTags(s.allTemplates, uniqueTags)
+	templatesList, _ := s.store.LoadTemplatesWithTags(s.allTemplates, uniqueTags)
 	gologger.Info().Msgf("Executing tags (%v) for host %s (%d templates)", strings.Join(uniqueTags, ","), input, len(templatesList))
 	for _, t := range templatesList {
 		s.opts.Progress.AddToTotal(int64(t.Executer.Requests()))

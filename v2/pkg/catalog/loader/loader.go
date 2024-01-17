@@ -167,11 +167,14 @@ func (store *Store) RegisterPreprocessor(preprocessor templates.Preprocessor) {
 
 // Load loads all the templates from a store, performs filtering and returns
 // the complete compiled templates for a nuclei execution configuration.
-func (store *Store) Load() {
+func (store *Store) Load() (err error) {
 	// slog.Println(slog.DEBUG, "store.finalTemplates ", store.finalTemplates)
 	// slog.Println(slog.DEBUG, "store.finalWorkflows ", store.finalWorkflows)
-	store.templates = store.LoadTemplates(store.finalTemplates)
+	store.templates, err = store.LoadTemplates(store.finalTemplates)
 	store.workflows = store.LoadWorkflows(store.finalWorkflows)
+
+	slog.Println(slog.DEBUG, "store.templates ", err)
+	return err
 }
 
 var templateIDPathMap map[string]string
@@ -215,6 +218,7 @@ func areWorkflowOrTemplatesValid(store *Store, filteredTemplatePaths map[string]
 	for templatePath := range filteredTemplatePaths {
 		if _, err := load(templatePath, store.tagFilter); err != nil {
 			if isParsingError("Error occurred loading template %s: %s\n", templatePath, err) {
+				slog.Println(slog.DEBUG, "Error occurred loading template ", templatePath, err)
 				areTemplatesValid = false
 				continue
 			}
@@ -254,6 +258,7 @@ func areWorkflowTemplatesValid(store *Store, workflows []*workflows.WorkflowTemp
 		_, err := store.config.Catalog.GetTemplatePath(workflow.Template)
 		if err != nil {
 			if isParsingError("Error occurred loading template %s: %s\n", workflow.Template, err) {
+				slog.Println(slog.DEBUG, "Error occurred loading template ", workflow.Template, err)
 				return false
 			}
 		}
@@ -273,7 +278,7 @@ func isParsingError(message string, template string, err error) bool {
 }
 
 // LoadTemplates takes a list of templates and returns paths for them
-func (store *Store) LoadTemplates(templatesList []string) []*templates.Template {
+func (store *Store) LoadTemplates(templatesList []string) ([]*templates.Template, error) {
 	return store.LoadTemplatesWithTags(templatesList, nil)
 }
 
@@ -303,12 +308,12 @@ func (store *Store) LoadWorkflows(workflowsList []string) []*templates.Template 
 
 // LoadTemplatesWithTags takes a list of templates and extra tags
 // returning templates that match.
-func (store *Store) LoadTemplatesWithTags(templatesList, tags []string) []*templates.Template {
+func (store *Store) LoadTemplatesWithTags(templatesList, tags []string) (loadedTemplates []*templates.Template, err error) {
 	includedTemplates, errs := store.config.Catalog.GetTemplatesPath(templatesList)
 	store.logErroredTemplates(errs)
 	templatePathMap := store.pathFilter.Match(includedTemplates)
 
-	loadedTemplates := make([]*templates.Template, 0, len(templatePathMap))
+	loadedTemplates = make([]*templates.Template, 0, len(templatePathMap))
 	for templatePath := range templatePathMap {
 		// slog.Println(slog.DEBUG, "templatePath", templatePath)
 		loaded, err := parsers.LoadTemplate(templatePath, store.tagFilter, tags, store.config.Catalog)
@@ -328,7 +333,11 @@ func (store *Store) LoadTemplatesWithTags(templatesList, tags []string) []*templ
 				}
 			}
 		} else if err != nil {
-			gologger.Warning().Msgf("Could not load template %s: %s\n", templatePath, err)
+			// gologger.Warning().Msgf("Could not load template %s: %s\n", templatePath, err)
+			slog.Println(slog.DEBUG, "Could not load template ", templatePath, err)
+
+			//这里加了之后就只能用单模版了
+			return loadedTemplates, err
 		}
 	}
 
@@ -336,7 +345,7 @@ func (store *Store) LoadTemplatesWithTags(templatesList, tags []string) []*templ
 		return loadedTemplates[i].Path < loadedTemplates[j].Path
 	})
 
-	return loadedTemplates
+	return
 }
 
 // IsHTTPBasedProtocolUsed returns true if http/headless protocol is being used for
