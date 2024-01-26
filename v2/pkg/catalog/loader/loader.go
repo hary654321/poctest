@@ -337,7 +337,7 @@ func (store *Store) LoadTemplatesWithTags(templatesList, tags []string) (loadedT
 			slog.Println(slog.DEBUG, "Could not load template ", templatePath, err)
 
 			//这里加了之后就只能用单模版了
-			return loadedTemplates, err
+			// return loadedTemplates, err
 		}
 	}
 

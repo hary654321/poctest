@@ -15,8 +15,8 @@ network:
 
     read-size: 4
     matchers:
-      - type: word
-        part: data
-        encoding: hex
-        words:
-          - "504f4e47"
+- type: word
+  part: data
+  encoding: hex
+  words:
+    - "504f4e47"
