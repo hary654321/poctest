@@ -315,7 +315,7 @@ func (store *Store) LoadTemplatesWithTags(templatesList, tags []string) (loadedT
 
 	loadedTemplates = make([]*templates.Template, 0, len(templatePathMap))
 	for templatePath := range templatePathMap {
-		// slog.Println(slog.DEBUG, "templatePath", templatePath)
+		slog.Println(slog.DEBUG, "tags", tags)
 		loaded, err := parsers.LoadTemplate(templatePath, store.tagFilter, tags, store.config.Catalog)
 		if loaded || store.pathFilter.MatchIncluded(templatePath) {
 			parsed, err := templates.Parse(templatePath, store.preprocessor, store.config.ExecutorOptions)
@@ -337,7 +337,7 @@ func (store *Store) LoadTemplatesWithTags(templatesList, tags []string) (loadedT
 			slog.Println(slog.DEBUG, "Could not load template ", templatePath, err)
 
 			//这里加了之后就只能用单模版了
-			// return loadedTemplates, err
+			return loadedTemplates, err
 		}
 	}
 

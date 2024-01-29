@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/projectdiscovery/nuclei/v2/core/slog"
 	"github.com/projectdiscovery/nuclei/v2/pkg/catalog"
 	"github.com/projectdiscovery/nuclei/v2/pkg/catalog/config"
 	"github.com/projectdiscovery/nuclei/v2/pkg/catalog/loader/filter"
@@ -38,6 +39,7 @@ func LoadTemplate(templatePath string, tagFilter *filter.TagFilter, extraTags []
 		return false, validationError
 	}
 
+	slog.Println(slog.DEBUG, "extraTags", extraTags)
 	return isTemplateInfoMetadataMatch(tagFilter, template, extraTags)
 }
 
@@ -121,6 +123,12 @@ func ParseTemplate(templatePath string, catalog catalog.Catalog) (*templates.Tem
 		return value.(*templates.Template), err
 	}
 	data, err := utils.ReadFromPathOrURL(templatePath, catalog)
+
+	// slog.Println(slog.DEBUG, "data=====", string(data))
+
+	datanew := strings.ReplaceAll(string(data), "http:", "requests:")
+
+	data = []byte(datanew)
 	if err != nil {
 		return nil, err
 	}
@@ -136,9 +144,12 @@ func ParseTemplate(templatePath string, catalog catalog.Catalog) (*templates.Tem
 	case config.JSON:
 		err = json.Unmarshal(data, template)
 	case config.YAML:
+		slog.Println(slog.DEBUG, "NoStrictSyntax====", NoStrictSyntax)
 		if NoStrictSyntax {
 			err = yaml.Unmarshal(data, template)
 		} else {
+
+			slog.Println(slog.DEBUG, "template====", template)
 			err = yaml.UnmarshalStrict(data, template)
 		}
 	default:

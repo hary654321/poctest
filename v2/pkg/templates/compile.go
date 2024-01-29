@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"strings"
 
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
@@ -211,6 +212,12 @@ func ParseTemplateFromReader(reader io.Reader, preprocessor Preprocessor, option
 	if preprocessor != nil {
 		data = preprocessor.Process(data)
 	}
+
+	// slog.Println(slog.DEBUG, "data=====", string(data))
+
+	datanew := strings.ReplaceAll(string(data), "http:", "requests:")
+
+	data = []byte(datanew)
 
 	if err := yaml.Unmarshal(data, template); err != nil {
 		return nil, err
