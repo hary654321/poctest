@@ -1,14 +1,16 @@
 package main
 
-import (
-	"fmt"
-	"io/ioutil"
-	"net/http"
-)
+import "fmt"
+
+type People struct {
+	Name string
+}
+
+func (p *People) String() string {
+	return fmt.Sprintf("print: %v", p.Name)
+}
 
 func main() {
-	res, _ := http.Get("https://www.baidu.com/")
-	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
-	fmt.Print(string(body))
+	p := &People{Name: "aaa"}
+	p.String()
 }
